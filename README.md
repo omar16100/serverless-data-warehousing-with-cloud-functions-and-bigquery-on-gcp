@@ -1,33 +1,4 @@
-# Serverless Data Warehousing Solution With Cloud Functions And Bigquery On GCP
-
-## 
-
-Create a VM instance
-
-Install Python
-
-Install pip
-
-Install Airflow
-
-```Shell
-sudo pip3 install apache-airflow
-```
-
-```Shell
-airflow initdb
-```
-
-```Shell
-airflow webserver -p 8080
-```
-
-```Shell
-
-```
-
-
-## 
+# Serverless Data Warehousing Solution With Cloud Functions And Bigquery On GCP 
 
 It is recommended that virtualenv be used to keep everything tidy. The [requirements.txt](requirements.txt) describes the dependencies needed for the code used in this repo.
 
@@ -43,7 +14,7 @@ The following high-level steps describe the setup needed to run this example:
 gcloud composer environments create example-environment --location=asia-south1
 ```
 
-It takes some time to create.
+It takes some time to create. Make sure you have the right quota limit of CPUs.
 
 4. Create a Cloud BigQuery table for the processed output. The following schema is used for this example:
 
