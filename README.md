@@ -118,6 +118,10 @@ gcloud functions deploy gcs-to-bq --region=asia-south1 --entry-point=gcs_to_bq -
 - [Google Sheets To Bigquery Cloud Function](https://github.com/omar16100/sheets-to-bigquery-cloud-function)
 - [GCS Triggered Cloud Functions](https://zaxrosenberg.com/gcs-triggered-google-cloud-functions/)
 
+## Caveats
+
+- Cloud Functions can only be triggered by Cloud Storage buckets in the same Google Cloud Platform project. Same for Bigquery table.
+
 ## Debugging Notes
 
 - Make sure you are in the right location supported by Cloud Composer
