@@ -1,6 +1,8 @@
 # Serverless Data Warehousing Solution With Cloud Functions And Bigquery On GCP
 
-## Introduction
+`Work In Progress`
+
+## Introduction 
 
 Traditionally data warehousing systems were built to save compute power and cost. Starting from the source to the sink, data would be aggregated and will become multiple times smaller. This is due to the limitation of compute power as well.
 
@@ -8,17 +10,43 @@ As with time, with **big data processing** becoming more common practive among a
 
 We will be working with Bigquery which is built upon the open source project Apache Drill. Originally Apache Drill is based on the Google Dremel.
 
-Apache Dremel is schema-free SQL query engine for Hadoop, NoSQL and cloud storage systems.
+**Apache Dremel** is schema-free SQL query engine for Hadoop, NoSQL and cloud storage systems.
 
-Meanswhile BigQuery is a fully-managed, serverless data warehouse that enables scalable analysis over petabytes of data. It is a serverless Software as a Service that supports querying using ANSI SQL. It also has built-in machine learning capabilities. [1](#references)
+Meanswhile **BigQuery** is a fully-managed, serverless data warehouse that enables scalable analysis over petabytes of data. It is a serverless Software as a Service that supports querying using ANSI SQL. It also has built-in machine learning capabilities. [1](#references)
 
-Apache Airflow :
+So, unlike before Petabytes of data can be calculated or processed within seconds allowing all kinds operations from aggregation to other scenerios.
 
-Cloud Composer : A fully managed workflow orchestration service built on Apache Airflow.
+But, we have to get the data to Bigquery first to take advantage of the capabilitites.
 
-A better way for some use cases
+Here comes Apache Airflow, which is th regular choice for running Extract Tranform Load (ETL) steps.
 
-### TODO : Comparison Table
+**Apache Airflow** is platform created by the community to programmatically author, schedule and monitor workflows.
+
+Apache Airflow is an open-source workflow management platform. It started at Airbnb in October 2014 as a solution to manage the company's increasingly complex workflows. Creating Airflow allowed Airbnb to programmatically author and schedule their workflows and monitor them via the built-in Airflow user interface.[2](#references)
+
+It requires virtual machine instances and database to operate.
+
+Google Cloud Platform has a managed service which makes it much simpler to use which is Cloud Composer.
+
+**Cloud Composer** is a fully managed workflow orchestration service built on Apache Airflow.
+
+But there simpler ways to achieve the **ETL** steps.
+
+Introducing **Cloud Functions**. It is scalable pay as you go Functions-as-a-Service (FaaS) to run your code with zero server management.
+
+- No servers to provision, manage, or upgrade
+
+- Automatically scale based on the load
+
+- Integrated monitoring, logging, and debugging capability
+
+- Built-in security at role and per function level based on the principle of least privilege
+
+- Key networking capabilities for hybrid and multi-cloud scenarios
+
+It is much better use functions instead of Apache Airflow for certain ETL use cases and this article will show how.
+
+### Comparison Table
 
 |Apache Airflow|Cloud Function|
 |:-|:-|
@@ -27,8 +55,11 @@ A better way for some use cases
 |High Learning Curve|Easy Of Use|
 |Requires More Administration|Requires Less Administration |
 
+## With Cloud Composer (Managed Apache Airflow)
 
-## With Cloud Composer (Manage Apache Airflow)
+We will be using Cloud Composer for the ETL steps here.
+
+And the next steps will show how to achieve such.
 
 It is recommended that virtualenv be used to keep everything tidy in the local environmeny. The [requirements.txt](requirements.txt) describes the dependencies needed for the code used in this repo.
 
@@ -89,7 +120,8 @@ From the Airflow GUI, you can create them in Admin -> Variables
 8. Upload the Python Dataflow code [process_delimited.py](dataflow/process_delimited.py) into a *dataflow* folder created in the base DAG folder.
 
 9. Finally follow these instructions to create a Cloud Function :
-    - To authenticate to IAP, grant the Appspot Service Account (used by Cloud Functions) the Service Account Token Creator role on itself
+
+- To authenticate to IAP, grant the Appspot Service Account (used by Cloud Functions) the Service Account Token Creator role on itself
 
 ```Shell
 gcloud iam service-accounts add-iam-policy-binding \
@@ -121,6 +153,8 @@ gsutil cp resources/usa_names.csv gs:// _input-gcs-bucket_
 
 ## With Cloud Functions
 
+Here, we will do the ETL steps with Cloud Functions.
+
 Function :
 
 ```Shell
@@ -144,6 +178,8 @@ def gcs_to_bq():
     
     data = pd.read_csv(uri, header=None)
     
+    # Preprocessing steps
+
     # Add columns 
     
     #data[['day', 'month', 'year']] = data[5].str.split('/', expand=True)
@@ -185,14 +221,6 @@ This function will get the `usa_names.csv` and send them to Bigquery. That's it.
 
 In the terminal above, you can see `--trigger-bucket` parameter. This tells the function to be triggered when new files are added, in this case `usa_names.csv`
 
-## References
-
-- [Bigquery](https://en.wikipedia.org/wiki/BigQuery)
-- [Cloud Composer Example](https://github.com/GoogleCloudPlatform/professional-services/tree/master/examples/cloud-composer-examples)
-- [GCS Bucket To Bigquery Cloud Function](https://github.com/omar16100/gcs-to-bigquery-function)
-- [Google Sheets To Bigquery Cloud Function](https://github.com/omar16100/sheets-to-bigquery-cloud-function)
-- [GCS Triggered Cloud Functions](https://zaxrosenberg.com/gcs-triggered-google-cloud-functions/)
-
 ## Caveats
 
 - Cloud Functions can only be triggered by Cloud Storage buckets in the same Google Cloud Platform project. Same for Bigquery table.
@@ -201,3 +229,12 @@ In the terminal above, you can see `--trigger-bucket` parameter. This tells the 
 
 - Make sure you are in the right location supported by Cloud Composer
 - The number of CPU quota should be satisfied
+
+## References
+
+- [Bigquery](https://en.wikipedia.org/wiki/BigQuery)
+- [Apache Airflow](https://en.wikipedia.org/wiki/Apache_Airflow)
+- [Cloud Composer Example](https://github.com/GoogleCloudPlatform/professional-services/tree/master/examples/cloud-composer-examples)
+- [GCS Bucket To Bigquery Cloud Function](https://github.com/omar16100/gcs-to-bigquery-function)
+- [Google Sheets To Bigquery Cloud Function](https://github.com/omar16100/sheets-to-bigquery-cloud-function)
+- [GCS Triggered Cloud Functions](https://zaxrosenberg.com/gcs-triggered-google-cloud-functions/)
