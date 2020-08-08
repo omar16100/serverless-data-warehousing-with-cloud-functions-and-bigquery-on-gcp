@@ -61,6 +61,8 @@ It is much better use functions instead of Apache Airflow for certain ETL use ca
 
 ## With Cloud Composer (Managed Apache Airflow)
 
+![](img/workflow-overview.png)
+
 We will be using Cloud Composer for the ETL steps here.
 
 And the next steps will show how to achieve such.
