@@ -1,8 +1,10 @@
 # Serverless Data Warehousing Solution With Cloud Functions And Bigquery On GCP
 
+![](img/BDA-project.png)
+
 `Work In Progress`
 
-## Introduction 
+## Introduction
 
 Traditionally data warehousing systems were built to save compute power and cost. Starting from the source to the sink, data would be aggregated and will become multiple times smaller. This is due to the limitation of compute power as well.
 
@@ -54,6 +56,8 @@ It is much better use functions instead of Apache Airflow for certain ETL use ca
 |Requires Servers|Pay To The Upper 100ms Executed|
 |High Learning Curve|Easy Of Use|
 |Requires More Administration|Requires Less Administration |
+
+![](img/BDA-project1.png)
 
 ## With Cloud Composer (Managed Apache Airflow)
 
