@@ -2,9 +2,15 @@
 
 ## Introduction
 
-Traditionally
+Traditionally data warehousing systems were built to save compute power and cost. Starting from the source to the sink, data would be aggregated and will become multiple times smaller. This is due to the limitation of compute power as well.
 
-Next Apache Airflow
+As with time, with **big data processing** becoming more common practive among all sizes of businesses and increase in compute power, the traditional way of doing things have changed.
+
+We will be working with Bigquery which is built upon the open source project Apache Drill. Originally Apache Drill is based on the Google Dremel.
+
+Apache Dremel is schema-free SQL query engine for Hadoop, NoSQL and cloud storage systems.
+
+Meanswhile BigQuery is a fully-managed, serverless data warehouse that enables scalable analysis over petabytes of data. It is a serverless Software as a Service that supports querying using ANSI SQL. It also has built-in machine learning capabilities. [1](#references)
 
 Apache Airflow :
 
@@ -13,6 +19,14 @@ Cloud Composer : A fully managed workflow orchestration service built on Apache 
 A better way for some use cases
 
 ### TODO : Comparison Table
+
+|Apache Airflow|Cloud Function|
+|:-|:-|
+|More Expensive|Cheaper |
+|Requires Servers|Pay To The Upper 100ms Executed|
+|High Learning Curve|Easy Of Use|
+|Requires More Administration|Requires Less Administration |
+
 
 ## With Cloud Composer (Manage Apache Airflow)
 
@@ -107,12 +121,73 @@ gsutil cp resources/usa_names.csv gs:// _input-gcs-bucket_
 
 ## With Cloud Functions
 
+Function :
+
+```Shell
+import google.cloud
+from google.cloud import bigquery
+import pandas as pd
+#import datetime
+#import time
+
+def gcs_to_bq():
+
+    # Construct a BigQuery client object.
+    
+    client = bigquery.Client()
+
+    # TODO(developer): Set table_id to the ID of the table to create.
+    
+    table_id = "bda-kict-2020.dataset_asia_south1.demo"
+    
+    uri = "gs://bda-input-bucket-asia-south/usa_names.csv"
+    
+    data = pd.read_csv(uri, header=None)
+    
+    # Add columns 
+    
+    #data[['day', 'month', 'year']] = data[5].str.split('/', expand=True)
+    #data[['day', 'month', 'year']].astype('int')
+    
+    #data['filename']=uri
+    
+    job_config = bigquery.LoadJobConfig(schema=[
+        bigquery.SchemaField("state", bigquery.enums.SqlTypeNames.STRING),
+        bigquery.SchemaField("gender", bigquery.enums.SqlTypeNames.STRING),
+        bigquery.SchemaField("year", bigquery.enums.SqlTypeNames.STRING),
+        bigquery.SchemaField("name", bigquery.enums.SqlTypeNames.STRING),
+        bigquery.SchemaField("number", bigquery.enums.SqlTypeNames.STRING),
+        bigquery.SchemaField("created_date", bigquery.enums.SqlTypeNames.STRING),
+        #bigquery.SchemaField("filename", bigquery.enums.SqlTypeNames.STRING)
+        #bigquery.SchemaField("load_dt", bigquery.enums.SqlTypeNames.DATETIME),
+    ],write_disposition="WRITE_TRUNCATE")
+
+    # Make an API request.
+
+    load_job = client.load_table_from_uri(
+        uri, table_id, job_config = job_config)
+    
+    # Wait for the job to complete.
+    
+    load_job.result()
+
+    table = client.get_table(table_id)
+    print("Loaded {} rows to table {}".format(table.num_rows, table_id))
+```
+
+Deploy the function :
+
 ```Shell
 gcloud functions deploy gcs-to-bq --region=asia-south1 --entry-point=gcs_to_bq --runtime=python37 --trigger-bucket=input-bucket --source=functions/gcs-to-bq/
 ```
 
+This function will get the `usa_names.csv` and send them to Bigquery. That's it.
+
+In the terminal above, you can see `--trigger-bucket` parameter. This tells the function to be triggered when new files are added, in this case `usa_names.csv`
+
 ## References
 
+- [Bigquery](https://en.wikipedia.org/wiki/BigQuery)
 - [Cloud Composer Example](https://github.com/GoogleCloudPlatform/professional-services/tree/master/examples/cloud-composer-examples)
 - [GCS Bucket To Bigquery Cloud Function](https://github.com/omar16100/gcs-to-bigquery-function)
 - [Google Sheets To Bigquery Cloud Function](https://github.com/omar16100/sheets-to-bigquery-cloud-function)

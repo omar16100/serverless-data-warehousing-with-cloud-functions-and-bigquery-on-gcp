@@ -1,8 +1,8 @@
 import google.cloud
 from google.cloud import bigquery
 import pandas as pd
-import datetime
-import time
+#import datetime
+#import time
 
 def gcs_to_bq():
 
