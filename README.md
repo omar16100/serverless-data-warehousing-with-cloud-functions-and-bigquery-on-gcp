@@ -1,16 +1,49 @@
 # Serverless Data Warehousing Solution With Cloud Functions And Bigquery On GCP
 
+## 
+
+Create a VM instance
+
+Install Python
+
+Install pip
+
+Install Airflow
+
+```Shell
+sudo pip3 install apache-airflow
+```
+
+```Shell
+airflow initdb
+```
+
+```Shell
+airflow webserver -p 8080
+```
+
+```Shell
+
+```
+
+
+## 
+
 It is recommended that virtualenv be used to keep everything tidy. The [requirements.txt](requirements.txt) describes the dependencies needed for the code used in this repo.
 
 The following high-level steps describe the setup needed to run this example:
 
 1. Create a Cloud Storage (GCS) bucket for receiving input files (*input-gcs-bucket*).
+
 2. Create a GCS bucket for storing processed files (*output-gcs-bucket*).
-3. Create a Cloud Composer environment
+
+3. Create a Cloud Composer environment from your terminal or Cloud Shell
 
 ```Shell
 gcloud composer environments create example-environment --location=asia-south1
 ```
+
+It takes some time to create.
 
 4. Create a Cloud BigQuery table for the processed output. The following schema is used for this example:
 
